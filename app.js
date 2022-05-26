@@ -84,7 +84,7 @@ app.patch("/saying/:id", async (req, res) => {
     SET content = ?,
     auter = ?,
     good_count = ?,
-    bsds_count = ?
+    bads_count = ?
     WHERE id = ?
     `,[content, auter, good_count, bads_count, id]
   );
