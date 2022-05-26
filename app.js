@@ -60,7 +60,7 @@ app.patch("/saying/:id", async (req, res) => {
     SELECT *
     FROM saying
     WHERE id = ?
-    `[id]
+    `,[id]
   );
 
   if(sayingRow === undefined) {
@@ -94,7 +94,7 @@ app.patch("/saying/:id", async (req, res) => {
     SELECT *
     FROM saying
     WHERE id = ?
-    `[id]
+    `,[id]
   );
 
   res.json({
