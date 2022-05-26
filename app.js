@@ -34,6 +34,16 @@ app.get("/saying/random", async (req, res) => {
     return;
   }
 
+  sayingRow.view_count++;
+
+  await pool.query(
+    `
+    UPDATE saying
+    SET view_count = ?
+    WHERE id = ?
+    `, [sayingRow.view_count, sayingRow.id]
+  );
+
   res.json({
     resultCode: "S-1",
     msg: "성공",
