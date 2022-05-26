@@ -1,5 +1,6 @@
 import express from "express";
 import mysql from "mysql2/promise";
+import cors from "cors";
 
 const pool = mysql.createPool({
   host: "localhost",
@@ -13,6 +14,7 @@ const pool = mysql.createPool({
 });
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 const port = 3000;
 
@@ -48,6 +50,57 @@ app.get("/saying/random", async (req, res) => {
     resultCode: "S-1",
     msg: "성공",
     data: sayingRow,
+  });
+});
+
+app.patch("/saying/:id", async (req, res) => {
+  const { id } = req.params;
+  const [[sayingRow]] = await pool.query(
+    `
+    SELECT *
+    FROM saying
+    WHERE id = ?
+    `[id]
+  );
+
+  if(sayingRow === undefined) {
+    res.status(404).json({
+      resultCode: "F-1",
+      msg: "404 not Found",
+    });
+    return;
+  }
+
+  const {
+    content = sayingRow.content,
+    auter = sayingRow.auter,
+    good_count = sayingRow.good_count,
+    bads_count = sayingRow.bads_count,
+  } = req.body;
+
+  await pool.query(
+    `
+    UPDATE saying
+    SET content = ?,
+    auter = ?,
+    good_count = ?,
+    bsds_count = ?
+    WHERE id = ?
+    `,[content, auter, good_count, bads_count, id]
+  );
+
+  const [[viewSayingRow]] = await pool.query(
+    `
+    SELECT *
+    FROM saying
+    WHERE id = ?
+    `[id]
+  );
+
+  res.json({
+    resultCode: "S-1",
+    msg: "성공",
+    data: viewSayingRow,
   });
 });
 
